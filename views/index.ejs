@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <title>VS Code</title>
+</head>
+<body>
+  <div id="overlay">
+    <div id="popup">
+      <i class="ri-close-fill"></i>
+      <form id="changeform" action="/update">
+        <input id="changeinput" type="text" name="filename"><br>
+        <input name="update" type="submit" value="update">
+      </form>
+    </div>
+  </div>
+  <div id="main">
+    <div id="left">
+      <div id="folder">
+        <h3 style="text-transform: capitalize;"><%= folder %></h3>
+        <div id="folder-icons">
+          <i id="add-file" class="ri-file-add-fill"></i>
+          <i id="add-folder" class="ri-folder-add-fill"></i>
+          <a style="color: #fff;text-decoration: none;" href="/"><i class="ri-refresh-line"></i></a>
+        </div>
+      </div>
+      <div class="filemaker">
+        <form class="form" action="/createfile">
+          <input type="text" name="filename" placeholder="File">
+        </form>
+      </div>
+      <div class="foldermaker">
+        <form class="form" action="/createfolder">
+          <input type="text" name="foldername" placeholder="Folder">
+        </form>
+      </div>
+      <div id="files">
+        <% files.forEach(function(file){ %>
+          <div class="file">
+              <div id="fil-fol" style="display: flex;align-items: center;justify-content: center;gap: 10px;">
+                <% if(file.isDirectory()){ %>
+                  <i class="ri-folder-line"></i>
+                <% } else { %>
+                  <i class="ri-file-line"></i>
+                <% } %>
+                <a style="text-decoration: none;color: #fff;" href="/file/<%= file.name %>"><h5><%= file.name %></h5></a>
+              </div>
+              <div id="file-icons">
+                <i data-value = "<%= file.name %>" id="editbtn" class="ri-pencil-fill"></i>
+                <% if(file.isDirectory()){ %>
+                  <a href="/delete/folder/<%= file.name %>"><i class="ri-delete-bin-fill"></i></a>
+                <% } else{ %>
+                  <a href="/delete/file/<%= file.name %>"><i class="ri-delete-bin-fill"></i></a>
+                <% } %>
+              </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+    <div id="right"></div>
+  </div>
+  
+  <script>
+
+    var flag = 0;
+    var glaf = 0;
+
+    function bothoff(){
+        document.querySelector(".filemaker").style.display = "none";
+        document.querySelector(".foldermaker").style.display = "none";
+    }
+
+    document.querySelector("#add-file").addEventListener("click", function(){
+      bothoff();
+      if(flag === 0){
+        document.querySelector(".filemaker").style.display = "initial";
+        document.querySelector("#files").style.marginTop = "0px";
+        flag = 1
+      }
+      else{
+        document.querySelector(".filemaker").style.display = "none";
+        document.querySelector("#files").style.marginTop = "15px";
+        flag = 0
+      }
+    })
+
+    document.querySelector("#add-folder").addEventListener("click", function(){
+      bothoff();
+      if(glaf === 0){
+        document.querySelector(".foldermaker").style.display = "initial";
+        document.querySelector("#files").style.marginTop = "0px";
+        glaf = 1
+      }
+      else{
+        document.querySelector(".foldermaker").style.display = "none";
+        document.querySelector("#files").style.marginTop = "15px";
+        glaf = 0
+      }
+    })
+
+    document.querySelector("#files").addEventListener("click", function(dets){
+      if(dets.target.id === "editbtn"){
+        document.querySelector("#overlay").style.display = "flex";
+        document.querySelector("#changeinput").value = dets.target.dataset.value;
+        document.querySelector("#changeform").setAttribute("action", `/update/${dets.target.dataset.value}`)
+      }
+    })
+
+    document.querySelector("#popup i").addEventListener("click", function(){
+      document.querySelector("#overlay").style.display = "none";
+    })
+
+  </script>
+</body>
+</html>
